@@ -2,31 +2,14 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
-import java.sql.*;
-import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Main {
-
-    Connection connection;
     QueryResult queryResult;
     DatabaseConnector databaseConnector;
 
     public Main() {
-        String jdbcUrl = "jdbc:sqlite:leagueoflegends.db";
-
-        connection = null;
-
-        try {
-            connection = DriverManager.getConnection(jdbcUrl);
-            System.out.println("Connected");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         databaseConnector = new DatabaseConnector("12345", 4747, "leagueoflegends.db", "lars", "hallo");
         init();
     }
@@ -169,24 +152,7 @@ public class Main {
 
     public void insertCreateTable(String pName, String pRoles, String pPopularity, String pWinrate, String pBanrate) {
         if (pPopularity != "") {
-            final String INSERT_Champions = "INSERT INTO Champions(name, role, popularity, winrate, banrate)  VALUES(?,?,?,?,?)";
-
-            PreparedStatement ps = null;
-
-            try {
-                ps = connection.prepareStatement(INSERT_Champions);
-
-                ps.setString(1, pName);
-                ps.setString(2, pRoles);
-                ps.setString(3, pPopularity);
-                ps.setString(4, pWinrate);
-                ps.setString(5, pBanrate);
-
-                ps.execute();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
+            databaseConnector.executeStatement("INSERT INTO Champions(name, role, popularity, winrate, banrate)  VALUES('" + pName + "', '" + pRoles + "', '" + pPopularity + "', '" + pWinrate + "', '" + pBanrate + "')");
         }
     }
 
